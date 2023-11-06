@@ -1,5 +1,5 @@
 # Save the paths of dataset dirs.
-class Path(object):
+class Path(object): #函数返回对应数据集位置
     @staticmethod
     def db_root_dir(dataset):
         if dataset == 'luna_ncs':

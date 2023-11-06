@@ -84,8 +84,8 @@ class BaseTrainer(object):
         self.config = config
         self.recorder = Recorder(config)
         self.get_device()
-        self.init_random_and_cudnn()
-        self.init_dataloader()
+        self.init_random_and_cudnn() #初始化用于复现性的随机种子和CUDA（GPU）的配置（如果可用）
+        self.init_dataloader() #初始化训练和评估数据集的数据加载器
         if self.config.model == 'Simple':
             self.init_model()
             self.model_to_gpu()  # must before initializing the optimizer
@@ -109,7 +109,7 @@ class BaseTrainer(object):
         self.device = torch.device('cuda:%d' % self.config.gpu_ids[0]
                                    if torch.cuda.is_available() and len(self.config.gpu_ids) > 0 else 'cpu')
 
-    def init_random_and_cudnn(self):
+    def init_random_and_cudnn(self): #设置随机数和cudnn
         # Set seed
         if self.config.manualseed is None:
             self.config.manualseed = random.randint(1, 10000)
@@ -176,7 +176,7 @@ class BaseTrainer(object):
 
     def init_optimizer_and_scheduler(self):
 
-        params = filter(lambda p: p.requires_grad, self.model.parameters())
+        params = filter(lambda p: p.requires_grad, self.model.parameters()) #params = filter(lambda p: p.requires_grad, self.model.parameters())：这一行代码通过迭代模型的参数，筛选出那些需要梯度更新的参数。通常，模型中的一些参数是不需要更新的，例如在迁移学习中可能会冻结某些层的参数，这里通过 p.requires_grad 来判断参数是否需要梯度更新。
 
         # init optimizer
         if self.config.optimizer == 'sgd':
@@ -206,7 +206,7 @@ class BaseTrainer(object):
         else:
             self.scheduler = None
 
-    def get_training_phase(self):
+    def get_training_phase(self): #其主要目的是确定当前模型的训练阶段，即是进行微调（fine-tuning）还是从头开始训练（from scratch）
 
         if self.config.pretrained_model is not None:
             self.training_phase = 'fine_tuning'

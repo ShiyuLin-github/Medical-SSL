@@ -9,7 +9,7 @@ class ClassificationTrainer(BaseTrainer):
         assert config.model == 'Simple'
 
     def random_sampler(self):
-        self.train_dataset.random_sampler()
+        self.train_dataset.random_sampler() #random_sampler方法来执行随机抽样操作，然后重新创建一个DataLoader对象，将抽样后的数据用于训练。这是一种数据增强的技术，可以在每个训练周期内使用不同的训练样本，以增加模型的泛化能力。
         self.train_dataloader = DataLoader(dataset=self.train_dataset,
                             batch_size=self.config.train_batch,
                             shuffle=True,
@@ -35,7 +35,7 @@ class ClassificationTrainer(BaseTrainer):
             self.model.train()
             self.recorder.logger.info('Epoch: %d/%d lr %e', epoch, self.config.epochs,
                                       self.optimizer.param_groups[0]['lr'])
-            if self.fine_tuning_scheme != 'full':
+            if self.fine_tuning_scheme != 'full': #如果采用微调策略（self.fine_tuning_scheme 不是 'full'），则根据当前训练周期检查是否需要解冻模型的某些层。
                 self.check_freezing_epoch(epoch)
             if self.config.sample_type == 'random':
                 if self.config.random_sample_ratio is not None:
@@ -95,6 +95,7 @@ class ClassificationTrainer(BaseTrainer):
                                           index=range(self.start_epoch, epoch + 1, self.config.val_epoch))
 
                 data_frame.to_csv(os.path.join(self.recorder.save_dir, "results.csv"), index_label='epoch')
+                #记录训练损失和验证指标，然后将它们保存到CSV文件中。
 
                 # plot loss
                 self.recorder.plot_val_metrics(self.start_epoch, epoch + 1, self.config.val_epoch,
@@ -109,7 +110,7 @@ class ClassificationTrainer(BaseTrainer):
                 if valid_metric > best_metric:
                     self.recorder.logger.info(
                         "Validation metric increases from {:.4f} to {:.4f}".format(best_metric, valid_metric))
-                    best_metric = valid_metric
+                    best_metric = valid_metric #记录最优模型参数
                     num_epoch_no_improvement = 0
                     self.save_state_dict(epoch + 1, os.path.join(self.recorder.save_dir, "model_best.pth"))
                     self.recorder.logger.info(

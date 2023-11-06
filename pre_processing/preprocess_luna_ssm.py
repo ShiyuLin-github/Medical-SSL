@@ -31,14 +31,14 @@ from utils.tools import save_np2nii
 sys.setrecursionlimit(40000)
 
 
-def generator_from_one_volume(img_array, org_data_size=[320, 320, 74]):
+def generator_from_one_volume(img_array, org_data_size=[320, 320, 74]): #generator_from_one_volume 函数接受一个输入的 CT 体积（3D 图像数据）并进行处理。它确保 CT 体积中的百斯单元（HU）值在指定范围内（-1000 到 1000）。然后，它通过选择输入体积的中心区域来将体积裁剪到目标大小（320x320x74）。处理后的图像数据被标准化为介于 0 和 1 之间的范围，函数返回处理后的图像数据。
     size_x, size_y, size_z = img_array.shape
 
     hu_min = -1000.
     hu_max = 1000.
     img_array[img_array < hu_min] = hu_min
     img_array[img_array > hu_max] = hu_max
-    img_array = 1.0 * (img_array - hu_min) / (hu_max - hu_min)
+    img_array = 1.0 * (img_array - hu_min) / (hu_max - hu_min) #数据标准化，max跟min撞了怎么办？
 
     h1 = int(round((size_x - org_data_size[0]) / 2.))
     w1 = int(round((size_y - org_data_size[1]) / 2.))
@@ -51,7 +51,8 @@ def generator_from_one_volume(img_array, org_data_size=[320, 320, 74]):
     return img_array
 
 
-def get_self_learning_data(fold, data_path):
+def get_self_learning_data(fold, data_path): #get_self_learning_data 函数：此函数处理 LUNA2016 数据集中特定折叠的 CT 体积。它接受两个参数：fold，它是要处理的折叠索引的列表，data_path，它是 LUNA2016 数据集的路径。对于指定折叠中的每个 CT 体积，它从“.mhd”文件中读取图像数据，对轴进行转置以匹配所需的方向（z、y、x），然后应用 generator_from_one_volume 函数来裁剪和标准化数据。处理后的数据以 NumPy 数组的形式保存在一个新目录中，每个体积的名称与原始文件相同，但使用“.npy”扩展名保存。输出显示处理的数据，包括裁剪体积的形状和体积中的最小值和最大值。
+
     for index_subset in fold:
         luna_subset_path = os.path.join(data_path, "subset" + str(index_subset))
         file_list = glob(os.path.join(luna_subset_path, "*.mhd"))
