@@ -28,6 +28,10 @@ class Path(object): #函数返回对应数据集位置
 
         elif dataset == 'msd_liver_seg_train' or dataset == 'msd_liver_seg_test' or dataset == 'msd_liver_seg_train_down2' or dataset == 'msd_liver_seg_test_down2':
             return '../data/MSD_liver_seg'#'../../nnUNet/DATASET/nnUNet_preprocessed/Task003_Liver/nnUNetData_plans_v2.1_stage1'
+        
+        #添加自己的数据集
+        elif dataset == 'MRI':
+            return 'E:\LSY\Train'
 
 
         else:
