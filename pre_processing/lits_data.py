@@ -20,7 +20,7 @@ import cv2
 import csv
 
 
-def clahe_equalized(imgs):
+def clahe_equalized(imgs): #clahe_equalized 函数：这个函数用于对CT图像进行直方图均衡化，以增强图像的对比度。它使用OpenCV的CLAHE（对比度有限的自适应直方图均衡化）算法对每个横断面图像进行处理。
    assert (len(imgs.shape)==3)  #3D arrays
    #create a CLAHE object (Arguments are optional).
    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
@@ -30,7 +30,7 @@ def clahe_equalized(imgs):
    return imgs_equalized
 
 
-def transform_ctdata(image, windowWidth, windowCenter, normal=False):
+def transform_ctdata(image, windowWidth, windowCenter, normal=False): #这个函数用于将CT图像的像素值转换到指定的窗宽和窗位范围内。它接受窗宽和窗位参数，并将图像像素值进行线性变换，使其范围在0到1之间。
     """
     return: trucated image according to window center and window width
     """

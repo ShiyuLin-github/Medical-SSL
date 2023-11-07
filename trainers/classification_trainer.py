@@ -43,7 +43,7 @@ class ClassificationTrainer(BaseTrainer):
             train_bar = tqdm(self.train_dataloader)
             for itr, sample in tqdm(enumerate(train_bar)):
                 self.set_input(sample)
-                self.optimize_parameters()
+                self.optimize_parameters() #model过程藏在这行代码里
                 train_losses.append(round(self.loss.item(), 2))
                 # print('size', self.input.size(), self.target.size(), self.pred.size())
                 if (itr + 1) % 500 == 0:
