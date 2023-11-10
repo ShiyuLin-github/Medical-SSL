@@ -31,7 +31,7 @@ class Path(object): #函数返回对应数据集位置
         
         #添加自己的数据集
         elif dataset == 'MRI':
-            return 'E:\LSY\Train'
+            return 'E:/LSY/UCSF-PDGM-v3'
 
 
         else:
