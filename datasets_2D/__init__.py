@@ -12,7 +12,7 @@ from torch.utils.data import DataLoader, WeightedRandomSampler
 
 
 datasets_dict_2D = {
-    'eyepacs_cls_per10': ClassificationEyePACSSet
+    'eyepacs_cls_per10': ClassificationEyePACSSet,
     'eyepacs_mg_pretask': MGEyepacsPretaskSet,
     'eyepacs_ae_pretask':AEEyepacsPretaskSet,
     'eyepacs_cl_pretask': CLEyepacsPretaskSet,

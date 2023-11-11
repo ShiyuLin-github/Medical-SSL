@@ -123,7 +123,7 @@ class BaseTrainer(object):
             torch.backends.cudnn.deterministic = True
             torch.backends.cudnn.benchmark = self.config.benchmark
 
-    def init_dataloader(self):
+    def init_dataloader(self): #数据载入部分
         if '3d' in self.config.network:
             self.train_dataset, self.train_dataloader = get_dataloder_3D(self.config, flag="train", drop_last=True)
             self.eval_dataset, self.eval_dataloader = get_dataloder_3D(self.config, flag="valid", drop_last=False)

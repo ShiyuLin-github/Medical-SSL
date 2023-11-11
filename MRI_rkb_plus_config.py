@@ -3,7 +3,6 @@ import numpy as np
 from tqdm import tqdm
 os.environ["CUDA_VISIBLE_DEVICES"] = "0, 1"
 from trainers import *
-# from . import trainers
 import argparse
 
 
@@ -25,7 +24,7 @@ class rkbp_config:
     hu_min = -1000.0
     hu_max = 1000.0
     scale = 4
-    input_size = [128, 128, 32] # [64, 64, 16]  # [128, 128, 64]
+    input_size = [240, 240, 155] # [64, 64, 16]  # [128, 128, 64]
     org_data_size = [320, 320, 74]
     train_dataset = 'MRI'
     eval_dataset = 'MRI'
