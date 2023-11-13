@@ -13,16 +13,16 @@ class RotTrainer(BaseTrainer):
         self.num_rotations_per_patch = self.config.num_rotations_per_patch
         
     def set_input(self, sample):
-    input, target = sample
-    if self.config.network.find('3d') != -1:
-        batch_size, rotations, c, x, y, z = input.size()
-        input = input.view([batch_size * rotations, c, x, y, z])
-        target = target.view([batch_size * rotations])
-        self.input = input.to(self.device)
-        self.target = target.to(self.device)
-    else:
-        self.input = input.to(self.device)
-        self.target = target.to(self.device)
+        input, target = sample
+        if self.config.network.find('3d') != -1:
+            batch_size, rotations, c, x, y, z = input.size()
+            input = input.view([batch_size * rotations, c, x, y, z])
+            target = target.view([batch_size * rotations])
+            self.input = input.to(self.device)
+            self.target = target.to(self.device)
+        else:
+            self.input = input.to(self.device)
+            self.target = target.to(self.device)
 
     def train(self):
         # to track the training loss as the model trains

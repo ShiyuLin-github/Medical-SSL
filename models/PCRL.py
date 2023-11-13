@@ -79,7 +79,7 @@ class PCRLModel3d(nn.Module):
         return feat_k, feat_q, feat_mixed, Pre_To_x1, Pre_Tm_x2, Pre_Th_x
 
 
-    class PCRLModel2d(nn.Module):
+class PCRLModel2d(nn.Module):
     def __init__(self, encoder, encoder_ema, decoder):
         super(PCRLModel2d, self).__init__()
         self.encoder = encoder

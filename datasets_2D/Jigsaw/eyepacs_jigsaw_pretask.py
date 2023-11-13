@@ -27,7 +27,7 @@ class JigSawEyepacsPretaskSet(JigsawBase):
 
         # load data
         self.all_images = []
-         if self.flag == 'train':
+        if self.flag == 'train':
             self.root_dir = os.path.join(self.base_dir, 'train_1024')
         else:
             self.root_dir = os.path.join(self.base_dir, 'test_1024')

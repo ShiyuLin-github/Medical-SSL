@@ -38,7 +38,7 @@ class RKBLunaPretaskSet(RKBBase):
         input = np.load(img_path)
         ## input:  [320, 320, 74]
 
-        if self.crop_size == [128, 128, 32]:
+        if self.crop_size == [128, 128, 32]: #如果刚好是中心裁剪的尺寸，刚好裁成4块
         # input: [276, 276, 74]
             input = self.center_crop_xy(input, [276, 276])
 

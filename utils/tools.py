@@ -366,6 +366,4 @@ def select_target_type(y, criterion):
         y = y.to(dtype=torch.int64)
     else:
         raise NotImplementedError('Not implemented criterion.')
-    return y 
-
-
+    return y

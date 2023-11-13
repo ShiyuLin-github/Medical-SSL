@@ -23,6 +23,7 @@ datasets_dict_3D = {
     'luna_rkb_pretask': RKBLunaPretaskSet,
     'luna_rkbp_pretask': RKBPLunaPretaskSet,
     'luna_jigsaw_pretask': JigSawLunaPretaskSet,
+    # "MRI": MRI, #新增我的data类
 
     'luna_ncs': SegmentationLunaSet,
     'luna_ncc': ClassificationLUNASet,

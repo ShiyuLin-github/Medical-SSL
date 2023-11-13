@@ -41,7 +41,7 @@ class SimCLRTrainer(BaseTrainer):
         # Whether or not to use 16-bit precision GPU trainin
         self.fp16_precision = True
         
-     def init_model(self):
+    def init_model(self):
         self.model = get_networks(self.config)
         dim_mlp = self.model.fc[0].weight.shape[1]
         if '3d' in self.config.network:

@@ -74,7 +74,7 @@ def get_networks(args):
     elif network_name == 'unet_3d_jigsaw' or network_name == 'unet_3d_rkb'  or network_name == 'unet_3d_rkbp':
         network = networks_dict[network_name](in_channels=args.im_channel, order_n_class=args.order_class_num, num_cubes=args.num_grids_per_axis ** 3)
         
-   elif network_name == 'unet_2d_jigsaw' :
+    elif network_name == 'unet_2d_jigsaw' :
         network = networks_dict[network_name](im_ch=args.im_channel, output_ch=args.order_class_num,
                                               num_cubes=args.num_grids_per_axis ** 2)
 
