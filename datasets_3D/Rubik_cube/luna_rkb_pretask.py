@@ -40,7 +40,7 @@ class RKBLunaPretaskSet(RKBBase):
 
         if self.crop_size == [128, 128, 32]: #如果刚好是中心裁剪的尺寸，刚好裁成4块
         # input: [276, 276, 74]
-            input = self.center_crop_xy(input, [276, 276])
+            input = self.center_crop_xy(input, [276, 276]) #先对xy平面截取中心缺口从320，320，74截取到276，276，74
 
             # get all the num_grids **3 cubes
             all_cubes = self.crop_cubes_3d(input,

@@ -61,7 +61,7 @@ class RKBBase(Dataset):
 
         return image[x:x + h, y:y + w, z:z + d] #这边取的时最边界点加上crop_size的大小，解释了为何上述代码的定中心方式如此
 
-    def crop_cubes_3d(self, image, flag, cubes_per_side, cube_jitter_xy=3, cube_jitter_z=3): #在3D图像中裁剪多个3D立方体的方法
+    def crop_cubes_3d(self, image, flag, cubes_per_side, cube_jitter_xy=3, cube_jitter_z=3): #在3D图像中裁剪多个3D立方体的方法，jitter貌似是为了防止数据连续变化留出的间隔大小，cubes_per_side应该是每个方向有多少个cube
         h, w, d = image.shape
 
         patch_overlap = -cube_jitter_xy if cube_jitter_xy < 0 else 0 #patch_overlap 计算了在裁剪时可能存在的重叠区域。如果 cube_jitter_xy 是负数，则 patch_overlap 采用该值；否则，为零。
@@ -80,7 +80,7 @@ class RKBBase(Dataset):
             for j in range(cubes_per_side):
                 for k in range(cubes_per_side):
 
-                    p = self.do_crop_3d(image,
+                    p = self.do_crop_3d(image, #当i=0时，从0截取到第一个grid
                                    i * h_grid,
                                    j * w_grid,
                                    k * d_grid,
@@ -100,7 +100,7 @@ class RKBBase(Dataset):
         # print('label', np.array(K_permutations[label]), label)
         return np.array(cubes)[np.array(K_permutations[label])], label
 
-    def center_crop_xy(self, image, size): # ...（在图像的x-y平面上执行中心裁剪的方法）
+    def center_crop_xy(self, image, size): # 在image中间截一个size大小的缺口，画图很容易理解
         """CenterCrop a sample.
            Args:
               image: [D, H, W]
