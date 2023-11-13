@@ -122,26 +122,26 @@ class RKBBase(Dataset):
 
         # multi-hot labels
         # [8, H, W, D]
-        rot_cubes = copy.deepcopy(cubes)
-        hor_vector = []
-        ver_vector = []
+        rot_cubes = copy.deepcopy(cubes) # 创建输入立方体的深层副本，以免修改原始数据
+        hor_vector = [] # 记录水平旋转的向量
+        ver_vector = [] # 记录垂直旋转的向量
 
         for i in range(self.num_cubes):
-            p = random.random()
-            cube = rot_cubes[i]
+            p = random.random()  # 生成一个0到1之间的随机数
+            cube = rot_cubes[i] # 获取当前处理的立方体
             # [H, W, D]
-            if p < 1/3:
+            if p < 1/3: # 如果 p 小于 1/3，表示进行水平旋转。将水平旋转的标志添加到 hor_vector，并沿x轴翻转180度。
                 hor_vector.append(1)
                 ver_vector.append(0)
                 # rotate 180 along x axis
-                rot_cubes[i] = np.flip(cube, (1, 2))
-            elif p < 2/3:
+                rot_cubes[i] = np.flip(cube, (1, 2)) # 沿x轴翻转180度
+            elif p < 2/3: #如果 p 大于等于 1/3 且小于 2/3，表示进行垂直旋转。将垂直旋转的标志添加到 ver_vector，并沿z轴翻转180度。
                 hor_vector.append(0)
                 ver_vector.append(1)
                 # rotate 180 along z axis
-                rot_cubes[i] = np.flip(cube, (0, 1))
+                rot_cubes[i] = np.flip(cube, (0, 1)) # 沿z轴翻转180度
 
-            else:
+            else: #如果 p 大于等于 2/3，不进行旋转，标志都设为0。
                 hor_vector.append(0)
                 ver_vector.append(0)
 
@@ -149,16 +149,16 @@ class RKBBase(Dataset):
 
     def mask(self, cubes): # ...（对3D立方体应用掩码的方法）
         mask_vector = []
-        masked_cubes = copy.deepcopy(cubes)
+        masked_cubes = copy.deepcopy(cubes) # 创建一个输入立方体的深层副本，以免修改原始数据
         for i in range(self.num_cubes):
-            cube = masked_cubes[i]
-            if random.random() < 0.5:
+            cube = masked_cubes[i] # 获取当前处理的立方体
+            if random.random() < 0.5: # 如果随机数小于0.5，应用掩码
                 # mask
-                mask_vector.append(1)
-                R = np.random.uniform(0, 1, cube.shape)
-                R = (R > 0.5).astype(np.int32)
-                masked_cubes[i] = cube * R
+                mask_vector.append(1) # 记录掩码的标志为1
+                R = np.random.uniform(0, 1, cube.shape) # 生成与立方体相同形状的随机数矩阵
+                R = (R > 0.5).astype(np.int32) # 将大于0.5的值设置为1，否则为0，形成二值掩码
+                masked_cubes[i] = cube * R # 将立方体与二值掩码相乘，进行掩码操作
             else:
-                mask_vector.append(0)
+                mask_vector.append(0) # 如果随机数大于等于0.5，不应用掩码，标志为0
 
         return masked_cubes, mask_vector
