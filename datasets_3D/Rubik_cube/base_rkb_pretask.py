@@ -61,7 +61,7 @@ class RKBBase(Dataset):
 
         return image[x:x + h, y:y + w, z:z + d] #这边取的时最边界点加上crop_size的大小，解释了为何上述代码的定中心方式如此
 
-    def crop_cubes_3d(self, image, flag, cubes_per_side, cube_jitter_xy=3, cube_jitter_z=3): #在3D图像中裁剪多个3D立方体的方法，jitter貌似是为了防止数据连续变化留出的间隔大小，cubes_per_side应该是每个方向有多少个cube
+    def crop_cubes_3d(self, image, flag, cubes_per_side, cube_jitter_xy=3, cube_jitter_z=3): #在3D图像中裁剪多个3D立方体的方法，jitter貌似是为了防止数据连续变化留出的间隔大小，从代码里可以看出如果有jitter则再次进行3D裁切，cubes_per_side应该是每个方向有多少个cube
         h, w, d = image.shape
 
         patch_overlap = -cube_jitter_xy if cube_jitter_xy < 0 else 0 #patch_overlap 计算了在裁剪时可能存在的重叠区域。如果 cube_jitter_xy 是负数，则 patch_overlap 采用该值；否则，为零。
@@ -88,7 +88,7 @@ class RKBBase(Dataset):
                                    w_grid + patch_overlap,
                                    d_grid + patch_overlap)
 
-                    if h_patch < h_grid or w_patch < w_grid or d_patch < d_grid:
+                    if h_patch < h_grid or w_patch < w_grid or d_patch < d_grid: #如果有jitter，则对之前裁切好的3D块再次裁切以保留jitter大小的间隔
                         p = self.crop_3d(p, flag, [h_patch, w_patch, d_patch])
 
                     cubes.append(p)

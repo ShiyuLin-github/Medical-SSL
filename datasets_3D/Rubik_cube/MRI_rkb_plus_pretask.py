@@ -46,12 +46,29 @@ class RKBP_MRI_PretaskSet(RKBBase):
 
         input_tensor = torch.Tensor(t1)
         # input: [240, 240, 155]
-        # input = np.load(img_file)
-        # input:  [320, 320, 74]
+        
+        input_tensor = input_tensor[:,:,0:154]
+        # 截去最后一层方便分块整除
 
         if self.crop_size == [128, 128, 32]:
             # input: [276, 276, 74]
             input = self.center_crop_xy(input, [276, 276])
+
+            # get all the num_grids **3 cubes
+            all_cubes = self.crop_cubes_3d(
+                input,
+                flag=self.flag,
+                cubes_per_side=self.num_grids_per_axis,
+                cube_jitter_xy=10,
+                cube_jitter_z=5,
+            )
+            # print(len(all_cubes), all_cubes[0].shape)
+        
+        # 这部分添加适合MRI的块大小
+        # MRI数据集大小[240,240,155],为了能够整除，应该截成154的depth，设crop_size=[120，120，77]
+        elif self.crop_size == [120, 120, 77]:
+            # input: [276, 276, 74]
+            # input = self.center_crop_xy(input, [276, 276])
 
             # get all the num_grids **3 cubes
             all_cubes = self.crop_cubes_3d(

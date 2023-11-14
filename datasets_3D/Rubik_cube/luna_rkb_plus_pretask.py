@@ -40,9 +40,9 @@ class RKBPLunaPretaskSet(RKBBase):
         input = np.load(img_file)
         # input:  [320, 320, 74]
 
-        if self.crop_size == [128, 128, 32]:
+        if self.crop_size == [128, 128, 32]: #代码只考虑了两种crop的情况
         # input: [276, 276, 74]
-            input = self.center_crop_xy(input, [276, 276])
+            input = self.center_crop_xy(input, [276, 276]) #如果切块大小为128，128，32，则先裁剪出两倍大cropsize的块
 
             # get all the num_grids **3 cubes
             all_cubes = self.crop_cubes_3d(input,
