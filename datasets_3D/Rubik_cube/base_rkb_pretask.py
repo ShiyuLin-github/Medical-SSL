@@ -25,8 +25,9 @@ class RKBBase(Dataset):
         self.order_num_classes = config.order_class_num
         self.rot_num_classes = self.num_cubes
 
-        self.K_permutations = np.load(config.k_permutations_path)
-        assert self.order_num_classes == len(self.K_permutations)
+        #不知道K_permutations干嘛的，但是没有path_file会报错，注释掉先吧
+        # self.K_permutations = np.load(config.k_permutations_path)
+        # assert self.order_num_classes == len(self.K_permutations)
 
     def __len__(self):
         return len(self.all_images)

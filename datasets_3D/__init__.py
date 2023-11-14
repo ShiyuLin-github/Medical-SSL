@@ -6,7 +6,7 @@ from datasets_3D.MG import MGLunaPretaskSet
 from datasets_3D.PCRL import PCRLLunaPretaskSet_ORIG, PCRLLunaPretaskSet
 from datasets_3D.Classification import ClassificationLUNASet
 from datasets_3D.AE import AELunaPretaskSet
-from datasets_3D.Rubik_cube import JigSawLunaPretaskSet,RKBLunaPretaskSet, RKBPLunaPretaskSet
+from datasets_3D.Rubik_cube import JigSawLunaPretaskSet,RKBLunaPretaskSet, RKBPLunaPretaskSet, RKBP_MRI_PretaskSet
 from datasets_3D.CL import CLLunaPretaskSet
 from datasets_3D.PTP import RotLunaPretaskSet, RPLLunaPretaskSet, RPLLunaPretaskSet_v2, RotLunaPretaskSet_v2
 
@@ -24,6 +24,7 @@ datasets_dict_3D = {
     'luna_rkbp_pretask': RKBPLunaPretaskSet,
     'luna_jigsaw_pretask': JigSawLunaPretaskSet,
     # "MRI": MRI, #新增我的data类
+    'MRI': RKBP_MRI_PretaskSet,
 
     'luna_ncs': SegmentationLunaSet,
     'luna_ncc': ClassificationLUNASet,
@@ -48,8 +49,14 @@ def get_dataloder_3D(args, flag="train", drop_last=True): #get_dataloder_3D 函�
         print('******Building training dataloder******')
         datasets_name = args.train_dataset
         assert datasets_name in datasets_dict_3D.keys(), "The dataset use {} is not exist ".format(datasets_name)
-        root = Path.db_root_dir(datasets_name) #在path.py里，从dataset名称到具体本地路径
-        dataset = datasets_dict_3D[datasets_name](config=args, base_dir=root, flag=flag)
+        #如果是我的数据集，设个if语句方便调试
+        if datasets_name == 'MRI':    
+            root = Path.db_root_dir(datasets_name) #在path.py里，从dataset名称到具体本地路径
+            dataset = datasets_dict_3D[datasets_name](config=args, base_dir=root, flag=flag)
+        else:
+            root = Path.db_root_dir(datasets_name) #在path.py里，从dataset名称到具体本地路径
+            dataset = datasets_dict_3D[datasets_name](config=args, base_dir=root, flag=flag)
+
         batch_size = args.train_batch
         shuffle = True
         num_workers = args.num_workers

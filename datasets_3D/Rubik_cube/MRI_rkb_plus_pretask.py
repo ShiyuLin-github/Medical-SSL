@@ -15,15 +15,15 @@ import nibabel as nib
 
 class RKBP_MRI_PretaskSet(RKBBase):
 
-    def __init__(self, config, base_dir, flag, root_dir, csv_dir):
-        super(RKBP_MRI_PretaskSet, self).__init__(config, base_dir, flag, root_dir, csv_dir)
+    def __init__(self, config, base_dir, flag):
+        super(RKBP_MRI_PretaskSet, self).__init__(config, base_dir, flag)
         self.config = config
         self.flag = flag
         self.org_data_size = config.org_data_size
         ##添加MRI数据集位置
-        self.root_dir = root_dir
-        self.samples = os.listdir(root_dir)
-        self.csv_file = pd.read_csv(csv_dir)
+        self.base_dir = base_dir
+        self.samples = os.listdir(self.base_dir)
+        # self.csv_file = pd.read_csv(csv_dir)
 
         if self.flag == "train": #这里修改的话不知道会不会有问题
             self.folds = config.train_fold
