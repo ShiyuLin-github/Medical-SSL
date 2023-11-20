@@ -83,12 +83,12 @@ class BaseTrainer(object):
 
         self.config = config
         self.recorder = Recorder(config)
-        self.get_device()
+        self.get_device() #从config.gpu_ids设置里判断是否多GPU还是CPU运算
         self.init_random_and_cudnn() #初始化用于复现性的随机种子和CUDA（GPU）的配置（如果可用）
         self.init_dataloader() #初始化训练和评估数据集的数据加载器
         if self.config.model == 'Simple':
-            self.init_model()
-            self.model_to_gpu()  # must before initializing the optimizer
+            self.init_model() 
+            self.model_to_gpu()  # must before initializing the optimizer，根据config.gpu_ids设置是否并行运算之类的
             self.get_training_phase()
             self.check_resume_and_pretrained_weights()
             self.set_trainable_params()
@@ -104,12 +104,12 @@ class BaseTrainer(object):
     def get_lr(self) -> int:
         return self.optimizer.param_groups[0]['lr']
 
-    def get_device(self):
+    def get_device(self): #从config.gpu_ids设置里判断是否多GPU还是CPU运算
         self.use_cuda = torch.cuda.is_available() and len(self.config.gpu_ids) > 0
         self.device = torch.device('cuda:%d' % self.config.gpu_ids[0]
                                    if torch.cuda.is_available() and len(self.config.gpu_ids) > 0 else 'cpu')
 
-    def init_random_and_cudnn(self): #设置随机数和cudnn
+    def init_random_and_cudnn(self): #config.manualseed 设置随机数和cudnn
         # Set seed
         if self.config.manualseed is None:
             self.config.manualseed = random.randint(1, 10000)
@@ -140,7 +140,7 @@ class BaseTrainer(object):
             self.model = get_models(self.config, self.network)
             self.model.cuda()
 
-    def init_loss_criterion(self):
+    def init_loss_criterion(self): #config.loss
         if self.config.loss == 'bce':
             self.criterion = nn.BCELoss(reduction='mean')
         elif self.config.loss == 'softdice':
@@ -174,7 +174,7 @@ class BaseTrainer(object):
 
         self.criterion.to(self.device)
 
-    def init_optimizer_and_scheduler(self):
+    def init_optimizer_and_scheduler(self): #config.optimizer，config.scheduler
 
         params = filter(lambda p: p.requires_grad, self.model.parameters()) #params = filter(lambda p: p.requires_grad, self.model.parameters())：这一行代码通过迭代模型的参数，筛选出那些需要梯度更新的参数。通常，模型中的一些参数是不需要更新的，例如在迁移学习中可能会冻结某些层的参数，这里通过 p.requires_grad 来判断参数是否需要梯度更新。
 
@@ -206,7 +206,8 @@ class BaseTrainer(object):
         else:
             self.scheduler = None
 
-    def get_training_phase(self): #其主要目的是确定当前模型的训练阶段，即是进行微调（fine-tuning）还是从头开始训练（from scratch）
+    def get_training_phase(self): #config.pretrained_model，config.transferred_part
+        #其主要目的是确定当前模型的训练阶段，即是进行微调（fine-tuning）还是从头开始训练（from scratch）
 
         if self.config.pretrained_model is not None:
             self.training_phase = 'fine_tuning'
@@ -223,21 +224,21 @@ class BaseTrainer(object):
 
         self.recorder.logger.info('Training phase : {}'.format(self.training_phase))
 
-    def model_to_gpu(self):
+    def model_to_gpu(self): #config.gpu_ids
         self.recorder.logger.info('use: %d gpus', torch.cuda.device_count())
         self.model = nn.DataParallel(self.model, device_ids=self.config.gpu_ids).to(self.device)
 
-    def check_resume_and_pretrained_weights(self):
+    def check_resume_and_pretrained_weights(self): #config.resume
         if self.config.resume is not None:
             # continue training -- load start_epoch and model
-            self.load_model_state_dict(self.config.resume)
+            self.load_model_state_dict(self.config.resume) #两个未看函数，标记一下
         else:
             if self.training_phase == 'fine_tuning':
                 # load pretrained weights
-                self.load_pretrained_weights()
+                self.load_pretrained_weights() #两个未看函数，标记一下
             self.start_epoch = 0
 
-    def set_trainable_params(self):
+    def set_trainable_params(self): #config.fine_tuning_scheme
         # default fine-tuning scheme == "full"
         self.fine_tuning_scheme = 'full'
         if self.training_phase == 'fine_tuning' and hasattr(self.config, "fine_tuning_scheme"):
@@ -260,20 +261,20 @@ class BaseTrainer(object):
                 raise NotImplementedError("the fine-tuning scheme is not settled!")
 
 
-    def set_input(self, sample):
+    def set_input(self, sample): #单纯地设置了个.to(device)
         input, target, image_index = sample
         self.input = input.to(self.device)
         self.target = target.to(self.device)
         self.image_index = image_index
 
-    def forward(self):
+    def forward(self): #model(input)
         self.pred = self.model(self.input)
 
-    def backward(self):
+    def backward(self): #计算loss的backward
         self.loss = self.criterion(self.pred, self.target)
         self.loss.backward()
 
-    def optimize_parameters(self):
+    def optimize_parameters(self): #结合forward和backward
         self.optimizer.zero_grad()
         self.forward()
         self.backward()
@@ -282,7 +283,7 @@ class BaseTrainer(object):
     def get_inference(self, input, target):
         input = input.to(self.device)
         target = target.to(self.device)
-        pred = self.network(input)
+        pred = self.network(input) #为啥这里是network(input)跟上面的model(input)不一致
         loss = self.criterion(pred, target)
         return pred, loss
 
