@@ -25,9 +25,9 @@ class RKBBase(Dataset):
         self.order_num_classes = config.order_class_num
         self.rot_num_classes = self.num_cubes
 
-        #不知道K_permutations干嘛的，但是没有path_file会报错，注释掉先吧
-        # self.K_permutations = np.load(config.k_permutations_path)
-        # assert self.order_num_classes == len(self.K_permutations)
+        #k_permutation在Rubik_cube中的base_rkb_pretask中进行处理
+        self.K_permutations = np.load(config.k_permutations_path)
+        assert self.order_num_classes == len(self.K_permutations)
 
     def __len__(self):
         return len(self.all_images)
@@ -96,9 +96,10 @@ class RKBBase(Dataset):
 
         return cubes
 
-    def rearrange(self, cubes, K_permutations):  # ...（根据排列重新排列立方体的方法）
+    def rearrange(self, cubes, K_permutations):  # ...根据排列重新排列立方体的方法
         label = random.randint(0, len(K_permutations) - 1)
         # print('label', np.array(K_permutations[label]), label)
+        # print(cubes[np.array(K_permutations[label])])
         return np.array(cubes)[np.array(K_permutations[label])], label
 
     def center_crop_xy(self, image, size): # 在image中间截一个size大小的缺口，画图很容易理解
@@ -129,18 +130,24 @@ class RKBBase(Dataset):
 
         for i in range(self.num_cubes):
             p = random.random()  # 生成一个0到1之间的随机数
-            cube = rot_cubes[i] # 获取当前处理的立方体
+            cube = rot_cubes[i] # 获取当前处理的立方体,这里debug看cube是个tensor，后续会出bug
+            # cube_ = cube.numpy() #设置一个numpy_arrary防止np.flip bug, 如果输入是nparray就不用这步
+            # p = 0.1 # for test
             # [H, W, D]
             if p < 1/3: # 如果 p 小于 1/3，表示进行水平旋转。将水平旋转的标志添加到 hor_vector，并沿x轴翻转180度。
                 hor_vector.append(1)
                 ver_vector.append(0)
                 # rotate 180 along x axis
-                rot_cubes[i] = np.flip(cube, (1, 2)) # 沿x轴翻转180度
+                rot_cubes[i] = np.flip(cube, (1, 2)) # 沿x轴翻转180度,BUG ValueError: step must be greater than zero,最后输出的应该是numpy形式
+                # cube = np.flip(cube_, (1, 2))
+                # rot_cubes[i] = cube
             elif p < 2/3: #如果 p 大于等于 1/3 且小于 2/3，表示进行垂直旋转。将垂直旋转的标志添加到 ver_vector，并沿z轴翻转180度。
                 hor_vector.append(0)
                 ver_vector.append(1)
                 # rotate 180 along z axis
                 rot_cubes[i] = np.flip(cube, (0, 1)) # 沿z轴翻转180度
+                # cube = np.flip(cube_, (0, 1))
+                # rot_cubes[i] = cube
 
             else: #如果 p 大于等于 2/3，不进行旋转，标志都设为0。
                 hor_vector.append(0)

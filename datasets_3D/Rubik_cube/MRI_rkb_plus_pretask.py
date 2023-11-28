@@ -40,15 +40,16 @@ class RKBP_MRI_PretaskSet(RKBBase):
         return len(self.samples)
 
     def __getitem__(self, index):
-        sample_path = os.path.join(self.root_dir, self.samples[index])
-        img_file = self.all_images[index]
+        sample_path = os.path.join(self.base_dir, self.samples[index])
         t1 = nib.load(os.path.join(sample_path, self.samples[index][:-6] + '_T1.nii.gz')).get_fdata()
 
         input_tensor = torch.Tensor(t1)
         # input: [240, 240, 155]
         
-        input_tensor = input_tensor[:,:,0:154]
+        input = input_tensor[:,:,0:154]
         # 截去最后一层方便分块整除
+
+        input = input.numpy()
 
         if self.crop_size == [128, 128, 32]:
             # input: [276, 276, 74]
@@ -65,7 +66,7 @@ class RKBP_MRI_PretaskSet(RKBBase):
             # print(len(all_cubes), all_cubes[0].shape)
         
         # 这部分添加适合MRI的块大小
-        # MRI数据集大小[240,240,155],为了能够整除，应该截成154的depth，设crop_size=[120，120，77]
+        # MRI数据集大小[240,240,155],为了能够整除，应该截成154的depth，设crop_size=[120，120，77],之所以做的是整除原因在于抄的上面的代码也是整除
         elif self.crop_size == [120, 120, 77]:
             # input: [276, 276, 74]
             # input = self.center_crop_xy(input, [276, 276])
@@ -92,13 +93,15 @@ class RKBP_MRI_PretaskSet(RKBBase):
                 cube_jitter_xy=6,
                 cube_jitter_z=4,
             )
-
+            
         else:
             NotImplementedError("This crop size has not been configured yet")
             all_cubes = None
 
+        # print(len(all_cubes), all_cubes[0].shape) # 查看all_cubes类型为tensor，8个[110, 110, 72]的tensor
+
         # Task1: Permutate the order of cubes
-        rearranged_cubes, order_label = self.rearrange(all_cubes, self.K_permutations)
+        rearranged_cubes, order_label = self.rearrange(all_cubes, self.K_permutations) #这里提示dtype=object问题，原因是因为输入的dataset输入类型为tensor，跟这个冲突，这里的做法是先处理nparry然后统一转为tensor
 
         # Task2: Rotate each cube randomly.
         rotated_cubes, hor_label, ver_label = self.rotate(rearranged_cubes)
@@ -106,7 +109,7 @@ class RKBP_MRI_PretaskSet(RKBBase):
         # Task2: Mask each cube randomly.
         masked_cubes, mask_label = self.mask(rotated_cubes)
 
-        final_cubes = np.expand_dims(np.array(masked_cubes), axis=1)
+        final_cubes = np.expand_dims(np.array(masked_cubes), axis=1) #在a xis=1的位置增加一个维度，可参文章
 
         return (
             torch.from_numpy(final_cubes.astype(np.float32)),
