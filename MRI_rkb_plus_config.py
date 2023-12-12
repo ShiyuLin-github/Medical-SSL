@@ -14,7 +14,8 @@ class rkbp_config:
     benchmark = False #用于设置cudnn.benchmark
     manualseed = 666 #随机数种子
     model = 'Simple' #用于决定是否是复杂的模型，在源码中BROL和PCRL是复杂模型
-    network = 'unet_3d_rkbp' #用于init_model中的get_networks
+    # network = 'unet_3d_rkbp' #用于base_trainer中init_model中的get_networks
+    network = 'VIT_3d'
     init_weight_type = 'kaiming'
     note = "RKBPlus_240_240_155_MRI" #修改标记
 
@@ -37,8 +38,8 @@ class rkbp_config:
     num_grids_per_axis = 2
 
     # model pre-training
-    train_batch = 1 #用于init_dataloader的get_dataloder_3D
-    val_batch = 1
+    train_batch = 2 #用于init_dataloader的get_dataloder_3D
+    val_batch = 2
     optimizer = "adam"
     scheduler = 'StepLR_multi_step'
     learning_rate_decay = [250]#[200]

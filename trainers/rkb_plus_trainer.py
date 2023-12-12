@@ -19,8 +19,11 @@ class RKBPTrainer(BaseTrainer):
 
     def set_input(self, sample):
         input, order_label, hor_rot_label, ver_rot_label, mask_label = sample
-        self.input = input.to(self.device)
-        self.order_label = order_label.to(self.device)
+        self.input = input.to(self.device) # input为all_cubes
+
+        self.order_label = order_label.to(torch.long) # 改为long类型防止CEloss报错
+        self.order_label = self.order_label.to(self.device)
+        
         self.hor_rot_label = hor_rot_label.to(self.device)
         self.ver_rot_label = ver_rot_label.to(self.device)
         self.mask_label = mask_label.to(self.device)

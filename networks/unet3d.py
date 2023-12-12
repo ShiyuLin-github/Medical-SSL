@@ -8,6 +8,7 @@ import numpy as np
 
 
 class ContBatchNorm3d(nn.modules.batchnorm._BatchNorm):
+    # 返回batch_normalization
     def _check_input_dim(self, input):
 
         if input.dim() != 5:
@@ -18,10 +19,11 @@ class ContBatchNorm3d(nn.modules.batchnorm._BatchNorm):
         self._check_input_dim(input)
         return F.batch_norm(
             input, self.running_mean, self.running_var, self.weight, self.bias,
-            True, self.momentum, self.eps)
+            True, self.momentum, self.eps) # Applies Batch Normalization for each channel across a batch of data.
 
 
 class LUConv(nn.Module):
+    # 1层3d卷积，1层bn，1层激活函数
     def __init__(self, in_chan, out_chan, act, eval_bn=False):
         super(LUConv, self).__init__()
         self.conv1 = nn.Conv3d(in_chan, out_chan, kernel_size=3, padding=1)
@@ -46,6 +48,7 @@ class LUConv(nn.Module):
 
 
 def _make_nConv(in_channel, depth, act, double_chnnel=False, eval_bn=False):
+    # 做了两个LUConv
     if double_chnnel:
         layer1 = LUConv(in_channel, 32 * (2 ** (depth+1)),act, eval_bn)
         layer2 = LUConv(32 * (2 ** (depth+1)), 32 * (2 ** (depth+1)),act, eval_bn)
@@ -524,8 +527,8 @@ class UNet3D_RKBP(nn.Module):
     def forward_once(self, x):
         conv_x = self.encoder(x)
         dense_x = self.gap(conv_x)
-        dense_x = torch.flatten(dense_x, 1, -1)
-        logits = self.fc6(dense_x)
+        dense_x = torch.flatten(dense_x, 1, -1) # [2, 512]
+        logits = self.fc6(dense_x) # [2, 64]
         return logits
 
     def forward(self, cubes):

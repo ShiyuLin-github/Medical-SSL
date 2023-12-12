@@ -7,6 +7,7 @@ from networks.PCRL import PCRLModel
 from networks.PCRL3d import PCRLModel3d
 from networks.MyPCLR3d import PCRLEncoder3d, PCRLDecoder3d, PCRLDecoder3d_wo_skip
 from networks.MyPCRL2d import PCRLEncoder2d, PCRLDecoder2d
+from networks.Myvit3d import VIT3D_RKBP
 
 networks_dict= {
     'unet_2d': UNet2D,
@@ -28,6 +29,7 @@ networks_dict= {
     'pcrl_3d_decoder': PCRLDecoder3d,
     'pcrl_2d_encoder': PCRLEncoder2d,
     'pcrl_2d_decoder': PCRLDecoder2d,
+    'VIT_3d': VIT3D_RKBP,
 }
 
 
@@ -77,7 +79,9 @@ def get_networks(args):
     elif network_name == 'unet_2d_jigsaw' :
         network = networks_dict[network_name](im_ch=args.im_channel, output_ch=args.order_class_num,
                                               num_cubes=args.num_grids_per_axis ** 2)
-
+        
+    elif network_name == 'VIT_3d' :
+        network = networks_dict[network_name](in_channels=1, order_n_class=args.order_class_num, num_cubes=args.num_grids_per_axis ** 3, act='relu')
 
     else:
         network = networks_dict[network_name](args.im_channel, args.class_num, args.normalization)
