@@ -11,7 +11,7 @@ class Recorder:
         self.config = config
         # result_dir: train_dataset(train_data + task) - network - model- note
         self.save_dir = '../checkpoints' + '/{}/'.format(config.train_dataset) + config.network + '_' + config.model \
-                          + '_' + config.note + '/{}'.format(time.strftime('%Y%m%d-%H%M%S'))
+                          + '_' + config.note + '/{}'.format(time.strftime('%Y%m%d-%H%M%S')) # time获取当前时间
         self.logger = tools.get_logger(self.save_dir)
         print('RUNDIR: {}'.format(self.save_dir))
         self.logger.info('{}-Train'.format(self.config.model))

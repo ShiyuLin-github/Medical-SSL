@@ -2,6 +2,9 @@ import os
 import numpy as np
 from tqdm import tqdm
 os.environ["CUDA_VISIBLE_DEVICES"] = "0, 1"
+import sys
+sys.path.append('..')
+print(sys.path)
 from trainers import *
 import argparse
 

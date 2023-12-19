@@ -98,3 +98,28 @@ class VIT3D_RKBP(nn.Module):
         fc_layers = ['fc6', 'order_fc', 'hor_rot_fc', 'ver_rot_fc']
         module_dict = {'encoder': encoder_layers, 'fc':fc_layers}
         return module_dict
+    
+
+class VIT3D(nn.Module):
+    # the number of convolutions in each layer corresponds
+    # to what is in the actual prototxt, not the intent
+        def __init__(self, image_size = 110,          # image size
+                    frames = 72,               # number of frames
+                    image_patch_size = 110,     # image patch size
+                    frame_patch_size = 1,      # frame patch size
+                    num_classes = 3,          # encoded dimension
+                    dim = 1024,
+                    depth = 2,
+                    heads = 8,
+                    mlp_dim = 2048,
+                    dropout = 0.1,
+                    emb_dropout = 0.1,
+                    channels = 1):
+            super(ViT, self).__init__()
+
+        @staticmethod
+        def get_module_dicts():
+            encoder_layers = ['down_tr64', 'down_tr128', 'down_tr256', 'down_tr512']
+            fc_layers = ['fc6', 'order_fc', 'hor_rot_fc', 'ver_rot_fc']
+            module_dict = {'encoder': encoder_layers, 'fc':fc_layers}
+            return module_dict

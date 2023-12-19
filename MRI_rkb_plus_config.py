@@ -47,13 +47,13 @@ class rkbp_config:
     max_queue_size = num_workers * 4
     epochs = 1000
     save_model_freq = 50
-    patience = 40
+    patience = 40 # 用于early stopping判断多少个epochs没有提升
     lr = 1e-3
-    loss = 'ce' #用于设定loss
+    loss = 'ce' # 用于设定loss
 
     # logs
     resume = None #继续训练之前训练过的模型
-    pretrained_model = None #用于trainer中的get_training_phase函数
+    pretrained_model = r'D:\Projects\Github_Local\checkpoints\MRI\VIT_3d_Simple_RKBPlus_240_240_155_MRI\20231212-224856\RCB_MRI.pth #用于trainer中的get_training_phase函数，如果不为none就开始finetuning'
 
     def display(self, logger):
         """Display Configuration values."""

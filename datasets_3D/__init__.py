@@ -5,6 +5,7 @@ from datasets_3D.Seg import SegmentationLunaSet,\
 from datasets_3D.MG import MGLunaPretaskSet
 from datasets_3D.PCRL import PCRLLunaPretaskSet_ORIG, PCRLLunaPretaskSet
 from datasets_3D.Classification import ClassificationLUNASet
+from datasets_3D.Classification import MRI_Classification
 from datasets_3D.AE import AELunaPretaskSet
 from datasets_3D.Rubik_cube import JigSawLunaPretaskSet,RKBLunaPretaskSet, RKBPLunaPretaskSet, RKBP_MRI_PretaskSet
 from datasets_3D.CL import CLLunaPretaskSet
@@ -25,6 +26,7 @@ datasets_dict_3D = {
     'luna_jigsaw_pretask': JigSawLunaPretaskSet,
     # "MRI": MRI, #新增我的data类
     'MRI': RKBP_MRI_PretaskSet,
+    'MRI_ncc': MRI_Classification,
 
     'luna_ncs': SegmentationLunaSet,
     'luna_ncc': ClassificationLUNASet,
@@ -53,6 +55,9 @@ def get_dataloder_3D(args, flag="train", drop_last=True): #get_dataloder_3D 函�
         if datasets_name == 'MRI':    
             root = Path.db_root_dir(datasets_name) #在path.py里，从dataset名称到具体本地路径
             dataset = datasets_dict_3D[datasets_name](config=args, base_dir=root, flag=flag)
+        elif datasets_name == 'MRI_ncc':    
+            root, csv_dir = Path.db_root_dir(datasets_name) #在path.py里，从dataset名称到具体本地路径
+            dataset = datasets_dict_3D[datasets_name](config=args, base_dir=root, csv_dir=csv_dir,flag=flag)
         else:
             root = Path.db_root_dir(datasets_name) #在path.py里，从dataset名称到具体本地路径
             dataset = datasets_dict_3D[datasets_name](config=args, base_dir=root, flag=flag)
@@ -65,8 +70,17 @@ def get_dataloder_3D(args, flag="train", drop_last=True): #get_dataloder_3D 函�
         print('******Building test dataloder******')
         datasets_name = args.eval_dataset
         assert datasets_name in datasets_dict_3D.keys(), "The dataset use {} is not exist ".format(datasets_name)
-        root = Path.db_root_dir(datasets_name)
-        dataset = datasets_dict_3D[datasets_name](config=args, base_dir=root, flag=flag)
+        
+        if datasets_name == 'MRI':    
+            root = Path.db_root_dir(datasets_name) #在path.py里，从dataset名称到具体本地路径
+            dataset = datasets_dict_3D[datasets_name](config=args, base_dir=root, flag=flag)
+        elif datasets_name == 'MRI_ncc':    
+            root, csv_dir = Path.db_root_dir(datasets_name) #在path.py里，从dataset名称到具体本地路径
+            dataset = datasets_dict_3D[datasets_name](config=args, base_dir=root, csv_dir=csv_dir,flag=flag)
+        else:
+            root = Path.db_root_dir(datasets_name) #在path.py里，从dataset名称到具体本地路径
+            dataset = datasets_dict_3D[datasets_name](config=args, base_dir=root, flag=flag)
+        
         batch_size = args.val_batch
         shuffle = False
         # num_workers = args.num_workers
