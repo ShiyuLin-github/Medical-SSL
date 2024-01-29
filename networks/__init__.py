@@ -7,7 +7,7 @@ from networks.PCRL import PCRLModel
 from networks.PCRL3d import PCRLModel3d
 from networks.MyPCLR3d import PCRLEncoder3d, PCRLDecoder3d, PCRLDecoder3d_wo_skip
 from networks.MyPCRL2d import PCRLEncoder2d, PCRLDecoder2d
-from networks.Myvit3d import VIT3D_RKBP, VIT3D
+from networks.Myvit3d import VIT3D_RKBP, VIT3D, My3dViT
 
 networks_dict= {
     'unet_2d': UNet2D,
@@ -29,7 +29,7 @@ networks_dict= {
     'pcrl_3d_decoder': PCRLDecoder3d,
     'pcrl_2d_encoder': PCRLEncoder2d,
     'pcrl_2d_decoder': PCRLDecoder2d,
-    'VIT_3d': VIT3D_RKBP,
+    'VIT_3d': My3dViT,
     'VIT_3d_ncc': VIT3D,
 }
 
@@ -82,7 +82,8 @@ def get_networks(args):
                                               num_cubes=args.num_grids_per_axis ** 2)
         
     elif network_name == 'VIT_3d' :
-        network = networks_dict[network_name](in_channels=1, order_n_class=args.order_class_num, num_cubes=args.num_grids_per_axis ** 3, act='relu')
+        # network = networks_dict[network_name](in_channels=1, order_n_class=args.order_class_num, num_cubes=args.num_grids_per_axis ** 3, act='relu')
+        network = networks_dict[network_name](image_size=240, frames=154, image_patch_size=120,  frame_patch_size=2, dim=1024,depth=6,heads=8,mlp_dim=2048,dropout=0.2,emb_dropout=0.1,channels=1, order_n_class=args.order_class_num, num_cubes=args.num_grids_per_axis ** 3) # input[b, 1, 240, 240, 154]
     
     elif network_name == 'VIT_3d_ncc' :
         network = networks_dict[network_name](channels=args.im_channel)

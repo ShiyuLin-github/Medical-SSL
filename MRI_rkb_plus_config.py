@@ -10,17 +10,17 @@ class rkbp_config:
 
     attr = 'class'
     # gpu_ids = [0, 1]
-    gpu_ids = [0] #没有多块GPU，做个修改看能不能跑通
-    benchmark = False #用于设置cudnn.benchmark
-    manualseed = 666 #随机数种子
-    model = 'Simple' #用于决定是否是复杂的模型，在源码中BROL和PCRL是复杂模型
-    # network = 'unet_3d_rkbp' #用于base_trainer中init_model中的get_networks
+    gpu_ids = [0] # 没有多块GPU，做个修改看能不能跑通
+    benchmark = False # 用于设置cudnn.benchmark
+    manualseed = 666 # 随机数种子
+    model = 'Simple' # 用于决定是否是复杂的模型，在源码中BROL和PCRL是复杂模型
+    # network = 'unet_3d_rkbp' # 用于base_trainer中init_model中的get_networks
     network = 'VIT_3d'
-    init_weight_type = 'kaiming'
-    note = "RKBPlus_240_240_155_MRI" #修改标记
+    init_weight_type = 'kaiming' 
+    note = "RKBPlus_240_240_155_MRI" # 修改标记
 
     # data
-    train_fold = [0, 1, 2, 3, 4] #rkb_plus_pretask.py中定义的get_luna_list中用到
+    train_fold = [0, 1, 2, 3, 4] # rkb_plus_pretask.py中定义的get_luna_list中用到
     valid_fold = [5, 6]
     test_fold = [7, 8, 9]
     hu_min = -1000.0
@@ -38,8 +38,8 @@ class rkbp_config:
     num_grids_per_axis = 2
 
     # model pre-training
-    train_batch = 2 #用于init_dataloader的get_dataloder_3D
-    val_batch = 2
+    train_batch = 4 #用于init_dataloader的get_dataloder_3D
+    val_batch = 4
     optimizer = "adam"
     scheduler = 'StepLR_multi_step'
     learning_rate_decay = [250]#[200]
@@ -53,7 +53,9 @@ class rkbp_config:
 
     # logs
     resume = None #继续训练之前训练过的模型
-    pretrained_model = r'D:\Projects\Github_Local\checkpoints\MRI\VIT_3d_Simple_RKBPlus_240_240_155_MRI\20231212-224856\RCB_MRI.pth #用于trainer中的get_training_phase函数，如果不为none就开始finetuning'
+    # pretrained_model = r'D:\Projects\Github_Local\checkpoints\MRI\VIT_3d_Simple_RKBPlus_240_240_155_MRI\20231212-224856\RCB_MRI.pth'  #用于trainer中的get_training_phase函数，如果不为none就开始finetuning
+
+    pretrained_model = None
 
     def display(self, logger):
         """Display Configuration values."""

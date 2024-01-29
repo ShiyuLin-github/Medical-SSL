@@ -73,7 +73,7 @@ class RKBPTrainer(BaseTrainer):
             train_bar = tqdm(self.train_dataloader)
             tloss = AverageMeter()  # AverageMeter()函数目的是计算一个epoch的平均损失，即将每个样本的损失取一下平均
             for itr, sample in tqdm(enumerate(train_bar)):
-                self.set_input(sample)
+                self.set_input(sample) # sample[0]是input，shape为[4, 1, 240, 240, 154]
                 self.optimize_parameters() # model(input)部分在这里
                 tloss.update(round(self.loss.item(), 2), self.config.train_batch)
 

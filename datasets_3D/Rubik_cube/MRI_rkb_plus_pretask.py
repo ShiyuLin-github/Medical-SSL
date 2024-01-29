@@ -66,7 +66,7 @@ class RKBP_MRI_PretaskSet(RKBBase):
             # print(len(all_cubes), all_cubes[0].shape)
         
         # 这部分添加适合MRI的块大小
-        # MRI数据集大小[240,240,155],为了能够整除，应该截成154的depth，设crop_size=[120，120，77],之所以做的是整除原因在于抄的上面的代码也是整除
+        # MRI数据集大小[240,240,155],为了能够整除，应该截成154的depth，设crop_size=[120，120，77], 之所以做的是整除原因在于抄的上面的代码也是整除
         elif self.crop_size == [120, 120, 77]:
             # input: [276, 276, 74]
             # input = self.center_crop_xy(input, [276, 276])
@@ -109,10 +109,18 @@ class RKBP_MRI_PretaskSet(RKBBase):
         # Task2: Mask each cube randomly.
         masked_cubes, mask_label = self.mask(rotated_cubes)
 
-        final_cubes = np.expand_dims(np.array(masked_cubes), axis=1) #在a xis=1的位置增加一个维度，可参文章
+        final_cubes = np.expand_dims(np.array(masked_cubes), axis=1) #在a xis=1的位置增加一个维度，可参文章 [8, 1, 110, 110, 72]
+
+        # 增加还原过程
+        final_cubes = torch.from_numpy(final_cubes.astype(np.float32))
+        # print(final_cubes.shape)
+        final_cubes = self.bak_to_onecube(final_cubes)
+        # print('worked')
+
 
         return (
-            torch.from_numpy(final_cubes.astype(np.float32)),
+            # torch.from_numpy(final_cubes.astype(np.float32)),
+            final_cubes,
             torch.from_numpy(np.array(order_label)),
             torch.from_numpy(np.array(hor_label)).float(),
             torch.from_numpy(np.array(ver_label)).float(),

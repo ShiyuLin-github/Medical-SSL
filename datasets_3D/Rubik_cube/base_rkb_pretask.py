@@ -170,3 +170,37 @@ class RKBBase(Dataset):
                 mask_vector.append(0) # 如果随机数大于等于0.5，不应用掩码，标志为0
 
         return masked_cubes, mask_vector
+    
+    def bak_to_onecube(self, all_cubes_,cube_jitter_xy=10,cube_jitter_z=5):
+        # b = all_cubes_.shape[0] # 在这里设置没有batch的维度
+        all_cubes_list = []
+        for i in range(all_cubes_.shape[0]):
+            all_cubes_list.append(all_cubes_[i,:,:,:,:])
+        jitter_xy = 2*cube_jitter_xy
+        jitter_z = 2*cube_jitter_z
+        cat_tensor_1 = []
+        for i in range(0,8,2):
+            jitter_xy_cube = torch.zeros(1, jitter_xy, 110, 72)
+            # print(jitter_xy_cube.shape)
+            test_tensor = torch.cat((all_cubes_list[i],jitter_xy_cube),dim=1)
+            # print(test_tensor.shape)
+            test_tensor2 = torch.cat((test_tensor,all_cubes_list[i+1]),dim=1)
+            # print(test_tensor2.shape)
+            cat_tensor_1.append(test_tensor2)
+        cat_tensor_2 = []
+        for i in range(0,4,2):
+            jitter_xy_cube = torch.zeros(1, 240, jitter_xy, 72)
+            # print(jitter_xy_cube.shape)
+            test_tensor = torch.cat((cat_tensor_1[i],jitter_xy_cube),dim=2)
+            # print(test_tensor.shape)
+            test_tensor2 = torch.cat((test_tensor,cat_tensor_1[i+1]),dim=2)
+            # print(test_tensor2.shape)
+            cat_tensor_2.append(test_tensor2)
+        jitter_z = 2*cube_jitter_z
+        jitter_z_cube = torch.zeros(1, 240, 240, jitter_z)
+        # print(jitter_xy_cube.shape)
+        test_tensor = torch.cat((cat_tensor_2[0],jitter_z_cube),dim=3)
+        # print(test_tensor.shape)
+        catted_tensor = torch.cat((test_tensor,cat_tensor_2[1]),dim=3)
+        # print(catted_tensor.shape)
+        return catted_tensor
