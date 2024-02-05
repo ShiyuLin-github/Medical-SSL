@@ -391,10 +391,10 @@ class My3dViT(nn.Module):
 
     def forward(self, video):
         # x = self.to_patch_embedding(video) # video[b,c,154,240,240]--> x[b, 308, 1024]' dim=1024, 308是n也就是一共有多少个patch
-
-        x = self.torearrange(video) # video[4,1,240,240,154]
-        x = self.twodvit(x)
-        x = self.torearrange_bck(x)
+        # video[4,1,240,240,154]
+        x = self.torearrange(video) # x[616, 1, 240, 240] (b*d, c, h, w)
+        x = self.twodvit(x) # x[616, 1024] (b*d, dim)
+        x = self.torearrange_bck(x) # x[4, 154, 1024]
 
         b, n, _ = x.shape # b n dim
 
